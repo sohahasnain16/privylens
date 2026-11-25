@@ -1,0 +1,51 @@
+{
+  "parameters": {
+    "ondevice_languages": {
+      "defaultValue": { "value": "en,es,ja" },
+      "description": "Comma-separated languages Chrome's on-device model can read/write. Others are routed to the cloud."
+    },
+    "max_ondevice_chars": {
+      "defaultValue": { "value": "12000" },
+      "valueType": "NUMBER",
+      "description": "Largest document sent to Gemini Nano in one shot (its window is ~9k tokens)."
+    },
+    "chunk_chars": {
+      "defaultValue": { "value": "6000" },
+      "valueType": "NUMBER",
+      "description": "Chunk size for on-device map-reduce of long documents."
+    },
+    "max_chunked_chars": {
+      "defaultValue": { "value": "60000" },
+      "valueType": "NUMBER",
+      "description": "Above this size we stop trying on-device map-reduce and use the cloud."
+    },
+    "force_mode": {
+      "defaultValue": { "value": "" },
+      "description": "Kill-switch / experiment: '' | prefer_on_device | only_on_device | prefer_in_cloud | only_in_cloud. PII is still masked."
+    },
+    "pii_redaction": {
+      "defaultValue": { "value": "true" },
+      "valueType": "BOOLEAN",
+      "description": "Mask CNIC/cards/IBAN/phones/e-mails before anything can reach the cloud."
+    },
+    "images_enabled": {
+      "defaultValue": { "value": "true" },
+      "valueType": "BOOLEAN",
+      "description": "Allow on-device image (photo of a document) input."
+    },
+    "cloud_model": {
+      "defaultValue": { "value": "gemini-3.5-flash-lite" },
+      "description": "Gemini model used for cloud fallback via Firebase AI Logic."
+    },
+    "nano_temperature": {
+      "defaultValue": { "value": "0.2" },
+      "valueType": "NUMBER",
+      "description": "On-device sampling temperature (only applied together with nano_top_k > 0)."
+    },
+    "nano_top_k": {
+      "defaultValue": { "value": "0" },
+      "valueType": "NUMBER",
+      "description": "On-device topK. 0 leaves Chrome's defaults untouched."
+    }
+  }
+}

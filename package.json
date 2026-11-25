@@ -1,0 +1,15 @@
+{
+  "name": "privylens",
+  "version": "1.0.0",
+  "description": "PrivyLens — a private document explainer. Gemini Nano on-device first, Gemini in the cloud only when it must, orchestrated with Firebase AI Logic.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "node --test test/*.test.js",
+    "check": "node scripts/check-syntax.mjs",
+    "deploy": "firebase deploy"
+  },
+  "engines": { "node": ">=20" }
+}

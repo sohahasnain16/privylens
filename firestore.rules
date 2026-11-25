@@ -1,0 +1,38 @@
+rules_version = '2';
+
+// PrivyLens stores only the *explanation* of a document — never the original text or photos.
+// These rules enforce that on the server, per signed-in (or anonymous) user.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    match /users/{uid}/analyses/{id} {
+      allow read, delete: if isOwner(uid);
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly([
+          'title', 'docType', 'language', 'route', 'sources', 'redactedCount',
+          'result', 'schemaVersion', 'createdAt'
+        ])
+        && request.resource.data.title is string && request.resource.data.title.size() <= 200
+        && request.resource.data.result is map
+        && request.resource.data.sources is list && request.resource.data.sources.size() <= 4;
+      allow update: if false;
+    }
+
+    // Privacy Ledger: atomic counters only.
+    match /users/{uid}/stats/{doc} {
+      allow read: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['runs', 'onDevice', 'cloud', 'masked', 'updatedAt'])
+        && request.resource.data.runs is int && request.resource.data.runs >= 0;
+      allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

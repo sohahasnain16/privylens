@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PrivyLens — explain anything private, privately</title>
+  <meta name="description" content="PrivyLens explains contracts, lab reports and bank messages in plain language. Gemini Nano on-device first; the cloud only when it must — orchestrated by Firebase AI Logic." />
+  <meta name="theme-color" content="#0e7c66" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="css/app.css" />
+
+  <!-- Firebase JS SDK 13 straight from the CDN: no build step. Same import lines work with `npm i firebase`. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js",
+      "firebase/app-check": "https://www.gstatic.com/firebasejs/13.0.0/firebase-app-check.js",
+      "firebase/ai": "https://www.gstatic.com/firebasejs/13.0.0/firebase-ai.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js",
+      "firebase/remote-config": "https://www.gstatic.com/firebasejs/13.0.0/firebase-remote-config.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- icon sprite -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></symbol>
+      <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></symbol>
+      <symbol id="i-chip" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+      <symbol id="i-down" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></symbol>
+      <symbol id="i-wifioff" viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M10.71 5.05A16 16 0 0122.58 9M1.42 9a15.91 15.91 0 014.7-2.88M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></symbol>
+      <symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="top">
+    <a class="brand" href="./" aria-label="PrivyLens home">
+      <img src="icon.svg" alt="" width="34" height="34" />
+      <span><b>PrivyLens</b><small>explain anything private, privately</small></span>
+    </a>
+    <div class="top-actions">
+      <button id="chipNano" class="chip" type="button" title="Gemini Nano status"></button>
+      <span id="chipNet" class="chip" role="status"></span>
+      <button id="btnLibrary" class="btn ghost" type="button"><svg class="icon"><use href="#i-book"/></svg><span>Library</span></button>
+      <button id="btnSettings" class="btn ghost icon-only" type="button" aria-label="Settings"><svg class="icon"><use href="#i-sliders"/></svg></button>
+      <button id="btnAuth" class="btn ghost" type="button"><svg class="icon"><use href="#i-user"/></svg><span id="authLabel">Sign in</span></button>
+    </div>
+  </header>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <main class="grid">
+    <!-- ───────────── 1 · Input ───────────── -->
+    <section class="card" aria-labelledby="h-input">
+      <div class="card-head">
+        <h2 id="h-input"><span class="step">1</span> Your document</h2>
+        <label class="sample-pick">
+          <span class="sr">Load a sample</span>
+          <select id="sample"><option value="">Try a sample…</option></select>
+        </label>
+      </div>
+
+      <textarea id="doc" rows="11" spellcheck="false" dir="auto"
+        placeholder="Paste a contract, lab report, bank SMS, policy… or drop a .txt file or a photo here."></textarea>
+      <div class="meta-row">
+        <span id="docMeta" class="muted">0 characters</span>
+        <span class="spacer"></span>
+        <button id="btnPhoto" class="btn small" type="button"><svg class="icon"><use href="#i-camera"/></svg> Add photo</button>
+        <button id="btnSamplePhoto" class="btn small ghost" type="button">Use sample photo</button>
+        <input id="file" type="file" accept="image/*" multiple hidden />
+      </div>
+      <div id="thumbs" class="thumbs"></div>
+
+      <div class="controls">
+        <label class="field">
+          <span>Explain in</span>
+          <select id="lang"></select>
+        </label>
+        <div class="field">
+          <span id="privLabel">Privacy level</span>
+          <div id="privacy" class="seg" role="radiogroup" aria-labelledby="privLabel">
+            <button type="button" role="radio" data-level="strict" title="Never leaves this device">Strict</button>
+            <button type="button" role="radio" data-level="balanced" title="Sensitive stays local; the rest may fall back to the cloud">Balanced</button>
+            <button type="button" role="radio" data-level="open" title="Cloud allowed (private items still masked)">Cloud-OK</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Privacy Router preview -->
+      <div id="route" class="route" data-route="on-device" aria-live="polite"></div>
+
+      <button id="btnAnalyze" class="btn primary big" type="button">
+        <svg class="icon"><use href="#i-shield"/></svg><span id="analyzeLabel">Explain privately</span>
+      </button>
+      <div id="progress" class="progress" hidden><div class="bar"><i id="bar"></i></div><span id="progressText"></span></div>
+    </section>
+
+    <!-- ───────────── 2 · Result ───────────── -->
+    <section class="card result-card" aria-labelledby="h-result">
+      <div class="card-head"><h2 id="h-result"><span class="step">2</span> Plain-language explanation</h2></div>
+
+      <div id="empty" class="empty">
+        <svg class="icon xl"><use href="#i-shield"/></svg>
+        <p><b>Your documents stay yours.</b></p>
+        <p class="muted">PrivyLens reads on this device with Gemini Nano. If it ever needs the cloud, private items (ID numbers, phones, cards) are masked first — and you can see exactly what would leave before you press the button.</p>
+        <ul class="ticks">
+          <li>Works offline once Gemini Nano is downloaded</li>
+          <li>Urdu · Roman Urdu · English · more</li>
+          <li>Photos are read on-device, never uploaded in Balanced mode</li>
+        </ul>
+      </div>
+
+      <div id="error" class="error" role="alert" hidden></div>
+
+      <article id="result" hidden>
+        <div class="result-top">
+          <span id="badge" class="badge"></span>
+          <span class="spacer"></span>
+          <button id="btnCopy" class="btn small ghost" type="button"><svg class="icon"><use href="#i-copy"/></svg> Copy</button>
+          <button id="btnSave" class="btn small" type="button"><svg class="icon"><use href="#i-save"/></svg> Save</button>
+        </div>
+        <div id="resultBody"></div>
+        <p class="disclaimer">PrivyLens explains documents; it is not legal, medical or financial advice. Always check important decisions with a qualified professional.</p>
+
+        <form id="askForm" class="ask" autocomplete="off">
+          <label for="askInput">Ask a follow-up about this document</label>
+          <div class="ask-row">
+            <input id="askInput" type="text" dir="auto" placeholder="e.g. Can the landlord keep my deposit?" />
+            <button class="btn primary" type="submit" aria-label="Ask"><svg class="icon"><use href="#i-send"/></svg></button>
+          </div>
+          <p id="askNote" class="muted small" hidden></p>
+          <div id="askOut" class="ask-out" hidden></div>
+        </form>
+      </article>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>Built with <b>Firebase AI Logic</b> · Gemini Nano on-device · Firebase Auth · Firestore · Remote Config · App Check</span>
+    <a href="https://github.com/sohahasnain16/privylens" id="repoLink" rel="noopener">Open source (Apache-2.0)</a>
+  </footer>
+
+  <!-- Library drawer -->
+  <aside id="drawer" class="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <h3>Your library</h3>
+      <button id="btnCloseDrawer" class="btn ghost icon-only" type="button" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
+    </div>
+    <div id="ledger" class="ledger"></div>
+    <p class="muted small">Only explanations are saved — never the original text or photos.</p>
+    <ul id="libList" class="lib-list"></ul>
+  </aside>
+
+  <!-- Gemini Nano setup -->
+  <dialog id="dlgSetup">
+    <form method="dialog" class="dlg">
+      <h3>Set up Gemini Nano (one time)</h3>
+      <p id="setupWhy" class="muted"></p>
+      <ol class="steps">
+        <li>Use <b>Chrome on desktop</b>, version 139 or newer.</li>
+        <li>Open <code>chrome://flags/#prompt-api-for-gemini-nano-multimodal-input</code>, set it to <b>Enabled</b>, then restart Chrome.</li>
+        <li>Press the button below to download the model (a few GB, once).</li>
+      </ol>
+      <div class="row">
+        <button id="btnCopyFlag" class="btn" type="button">Copy flag URL</button>
+        <button id="btnDownload" class="btn primary" type="button"><svg class="icon"><use href="#i-down"/></svg> Download Gemini Nano</button>
+      </div>
+      <div id="dlProgress" class="progress" hidden><div class="bar"><i id="dlBar"></i></div><span id="dlText"></span></div>
+      <p id="setupStatus" class="muted small"></p>
+      <div class="row end"><button class="btn ghost" value="close">Close</button></div>
+    </form>
+  </dialog>
+
+  <!-- Settings / diagnostics -->
+  <dialog id="dlgSettings">
+    <form method="dialog" class="dlg">
+      <h3>Settings &amp; diagnostics</h3>
+      <dl id="diag" class="diag"></dl>
+      <label class="check"><input id="simOffline" type="checkbox" /> Demo: pretend I'm offline (nothing may leave the device)</label>
+      <div class="row">
+        <button id="btnRefreshPolicy" class="btn" type="button">Refresh Remote Config</button>
+      </div>
+      <details><summary>Active routing policy</summary><pre id="policyJson"></pre></details>
+      <div class="row end"><button class="btn ghost" value="close">Close</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

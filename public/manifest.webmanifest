@@ -1,0 +1,10 @@
+{
+  "name": "PrivyLens",
+  "short_name": "PrivyLens",
+  "description": "Explain contracts, lab reports and bank messages privately — on-device first.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f3ee",
+  "theme_color": "#0e7c66",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
